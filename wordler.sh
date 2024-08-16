@@ -1,14 +1,22 @@
 #!/bin/bash
 #Original command might look like this:
 # grep '^.....$' /usr/share/dict/american-english |grep -v [^a-z]  |grep e | grep n | grep -v ..e.. |grep -v ....e |grep -v ...n. |grep -vc [arosbld]
-maxguesses=6
-turn=0
+
+#Dictionary file location.  The dictionary should be a plain text file with one word per line.  
+#If you download the dictionary that Wordle uses, results will be more accurate.  Be aware that Wordle uses two lists, and you'll need both in one file.
 dictionary="/usr/share/dict/american-english"
+#Wordle games currently only allow 6 guesses
+maxguesses=6
+
+#Track which turn the player is on.
+turn=0
+
 
 #Higher debug level triggers more test output
 debug=0
 
 #Check if guesses have been supplied as arguments
+#TODO Allow Green and Yellow to be filled from arguments 
 if [ $# = 0 ] ;then
 	inputdone=0
 	i=0
@@ -35,7 +43,7 @@ if [ $# = 0 ] ;then
 fi
 
 #Store supplied guesses as variable array
-#TODO Make sure each guess is 5 letters, no non-letter chars.  
+#TODO Allow player to continute interactively.  Detect non-guess input.  "help" "?,q,!" "clue" etc
 
 i=0
 while [ $# -gt 0 ]; do
@@ -99,8 +107,8 @@ if [ $debug -gt 0 ]; then
 	echo Green: $green
 fi
 
-grepcommand='grep '^$green\$  $dictionary'  |grep -v [^a-z] '
-
+grepcommand="grep ^$green\$  $dictionary  |grep -v [^a-z] "
+echo $grepcommand
 #loop through yellow, one letter at a time, adding grep calls for Yellow letters
 for ((i = 0 ; i < ${#yellow} ; i++)); do 
 	grepcommand+='| grep '${yellow:$i:1}'' 
